@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	"order_service/internal/models"
-	"order_service/pkg/api/order"
+	order "order_service/pkg/api/3_1"
 )
 
 type Service interface {

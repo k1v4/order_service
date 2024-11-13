@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"order_service/internal/models"
 	"order_service/internal/repository"
 	"order_service/internal/service"
@@ -16,6 +17,7 @@ import (
 const (
 	serviceName = "order_service"
 	grpcPort    = 50051
+	restPort    = 8080
 )
 
 func main() {
@@ -28,7 +30,7 @@ func main() {
 	repo := repository.NewOrderRepository(db, &mu)
 	service := service.NewOrderService(repo)
 
-	grpcServer, err := grpc.New(ctx, grpcPort, service)
+	grpcServer, err := grpc.New(ctx, grpcPort, restPort, service)
 	if err != nil {
 		mainLogger.Error(ctx, err.Error())
 		return
@@ -51,4 +53,5 @@ func main() {
 		mainLogger.Error(ctx, err.Error())
 	}
 	mainLogger.Info(ctx, "Server stopped")
+	fmt.Println("Server stopped")
 }
