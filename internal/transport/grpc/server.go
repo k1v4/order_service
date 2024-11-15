@@ -50,7 +50,7 @@ func New(ctx context.Context, grpcPort, restPort int, service Service) (*Server,
 	}
 
 	gwServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", 8090),
+		Addr:    fmt.Sprintf(":%d", restPort),
 		Handler: gwmux,
 	}
 

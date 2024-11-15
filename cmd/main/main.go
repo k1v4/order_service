@@ -3,21 +3,20 @@ package main
 import (
 	"context"
 	"fmt"
-	"order_service/internal/models"
+	"order_service/internal/config"
 	"order_service/internal/repository"
 	"order_service/internal/service"
 	"order_service/internal/transport/grpc"
+	"order_service/pkg/db/cache"
+	"order_service/pkg/db/postgres"
 	"order_service/pkg/logger"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 )
 
 const (
 	serviceName = "order_service"
-	grpcPort    = 50051
-	restPort    = 8080
 )
 
 func main() {
@@ -25,12 +24,22 @@ func main() {
 	mainLogger := logger.New(serviceName)
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 
-	mu := sync.RWMutex{}
-	db := make(map[string]models.Order)
-	repo := repository.NewOrderRepository(db, &mu)
+	cfg := config.New()
+	if cfg == nil {
+		panic("failed to load config")
+	}
+
+	redis := cache.New(cfg.RedisConfig)
+	fmt.Println(redis.Ping(ctx))
+
+	db, err := postgres.New(cfg.Config)
+	if err != nil {
+		panic(err)
+	}
+	repo := repository.NewOrderRepository(db)
 	service := service.NewOrderService(repo)
 
-	grpcServer, err := grpc.New(ctx, grpcPort, restPort, service)
+	grpcServer, err := grpc.New(ctx, cfg.GRPCServerPort, cfg.RestServerPort, service)
 	if err != nil {
 		mainLogger.Error(ctx, err.Error())
 		return

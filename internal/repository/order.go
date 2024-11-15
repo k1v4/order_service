@@ -2,10 +2,12 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
+	sq "github.com/Masterminds/squirrel"
 	"order_service/internal/models"
-	"sync"
-	"sync/atomic"
+	"order_service/pkg/db/postgres"
 )
 
 const (
@@ -13,64 +15,78 @@ const (
 )
 
 type OrderRepository struct {
-	db        map[string]models.Order
-	rw        *sync.RWMutex
-	idCounter int64
+	db *postgres.DB
 }
 
-func NewOrderRepository(mapa map[string]models.Order, rw *sync.RWMutex) *OrderRepository {
-	return &OrderRepository{mapa, rw, 0}
+func NewOrderRepository(db *postgres.DB) *OrderRepository {
+	return &OrderRepository{db}
 }
 
 func (r *OrderRepository) CreateOrder(ctx context.Context, order models.Order) (*models.Order, error) {
-	r.rw.Lock()
-	defer r.rw.Unlock()
-	order.ID = fmt.Sprintf("%d", atomic.AddInt64(&r.idCounter, 1))
-
-	if _, ok := r.db[order.ID]; !ok {
-		r.db[order.ID] = order
+	var result models.Order
+	err := sq.Insert("orders").
+		Columns("item", "quantity").
+		Values(order.Item, order.Quantity).
+		Suffix("RETURNING *").
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db.Db).
+		QueryRow().
+		Scan(&result.ID, &result.Item, &result.Quantity)
+	if err != nil {
+		return nil, fmt.Errorf("repository.CreateOrder: %w", err)
 	}
 
-	return &order, nil
+	return &result, nil
 }
 
 func (r *OrderRepository) GetOrder(ctx context.Context, id string) (*models.Order, error) {
-	order := models.Order{}
-	r.rw.Lock()
-	defer r.rw.Unlock()
+	var result models.Order
 
-	if v, ok := r.db[id]; ok {
-		order = v
-	} else {
-		return nil, fmt.Errorf(errNoOrder)
+	err := sq.Select("*").
+		From("orders").
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db.Db).
+		QueryRow().
+		Scan(&result.ID, &result.Item, &result.Quantity)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf(errNoOrder)
+		}
+		return nil, fmt.Errorf("repository.GetOrder: %w", err)
 	}
 
-	return &order, nil
+	return &result, nil
 }
 
 func (r *OrderRepository) UpdateOrder(ctx context.Context, newOrder models.Order) (*models.Order, error) {
-	r.rw.Lock()
-	defer r.rw.Unlock()
-
-	id := newOrder.ID
-
-	if _, ok := r.db[id]; ok {
-		r.db[id] = newOrder
-	} else {
-		return nil, fmt.Errorf(errNoOrder)
+	_, err := sq.Update("orders").
+		Set("quantity", newOrder.Quantity).
+		Set("item", newOrder.Item).
+		Where(sq.Eq{"id": newOrder.ID}).
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db.Db).
+		Query()
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf(errNoOrder)
+		}
+		return nil, fmt.Errorf("repository.UpdateOrder: %w", err)
 	}
 
 	return &newOrder, nil
 }
 
 func (r *OrderRepository) DeleteOrder(ctx context.Context, id string) error {
-	r.rw.Lock()
-	defer r.rw.Unlock()
 
-	if _, ok := r.db[id]; ok {
-		delete(r.db, id)
-	} else {
-		return fmt.Errorf(errNoOrder)
+	_, err := sq.Delete("orders").
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db.Db).
+		Query()
+	fmt.Println(err)
+	if err != nil {
+		return fmt.Errorf("repository.DeleteOrder: %w", err)
 	}
 
 	return nil
@@ -78,11 +94,23 @@ func (r *OrderRepository) DeleteOrder(ctx context.Context, id string) error {
 
 func (r *OrderRepository) ListOrders(ctx context.Context) (*[]models.Order, error) {
 	var orders []models.Order
-	r.rw.Lock()
-	defer r.rw.Unlock()
+	rows, err := sq.Select("*").
+		From("orders").
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db.Db).
+		Query()
+	if err != nil {
+		return nil, fmt.Errorf("repository.ListOrders: %w", err)
+	}
 
-	for _, v := range r.db {
-		orders = append(orders, v)
+	for rows.Next() {
+		var order models.Order
+		err = rows.Scan(&order.ID, &order.Item, &order.Quantity)
+		if err != nil {
+			return nil, fmt.Errorf("repository.ListOrders: %w", err)
+		}
+
+		orders = append(orders, order)
 	}
 
 	return &orders, nil

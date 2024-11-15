@@ -2,7 +2,13 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"order_service/internal/models"
+)
+
+const (
+	errEmptyItem     = "empty item"
+	errWrongQuantity = "quantity must be greater or equal then 0"
 )
 
 type OrderRepo interface {
@@ -25,6 +31,14 @@ func NewOrderService(repo OrderRepo) *OrderService {
 
 func (s *OrderService) CreateOrder(ctx context.Context, position models.Order) (*models.Order, error) {
 	// Здесь все дополнительные проверки, походы в другие сервисы, склеивание данных из разных баз и тд
+	if len(position.Item) < 1 {
+		return nil, fmt.Errorf(errEmptyItem)
+	}
+
+	if position.Quantity < 0 {
+		return nil, fmt.Errorf(errWrongQuantity)
+	}
+
 	return s.Repo.CreateOrder(ctx, position)
 }
 
@@ -41,5 +55,13 @@ func (s *OrderService) ListOrders(ctx context.Context) (*[]models.Order, error) 
 }
 
 func (s *OrderService) UpdateOrder(ctx context.Context, newOrder models.Order) (*models.Order, error) {
+	if len(newOrder.Item) < 1 {
+		return nil, fmt.Errorf(errEmptyItem)
+	}
+
+	if newOrder.Quantity < 0 {
+		return nil, fmt.Errorf(errWrongQuantity)
+	}
+
 	return s.Repo.UpdateOrder(ctx, newOrder)
 }
