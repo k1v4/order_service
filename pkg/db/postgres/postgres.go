@@ -24,8 +24,6 @@ func New(config Config) (*DB, error) {
 	connectString := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s port=%s",
 		config.UserName, config.Password, config.DbName, config.Host, config.Port)
 
-	fmt.Println(connectString)
-
 	db, err := sqlx.Connect("postgres", connectString)
 	if err != nil {
 		log.Fatalln(err)

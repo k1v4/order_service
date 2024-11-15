@@ -14,6 +14,8 @@ FROM alpine AS runner
 
 COPY --from=builder /usr/local/src/bin/app /
 
+EXPOSE 50051
+
 COPY .env /
 
 CMD ["/app"]
