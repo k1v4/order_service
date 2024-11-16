@@ -5,7 +5,8 @@ DO $$
         ) THEN
             EXECUTE 'CREATE DATABASE order_service';
         END IF;
-    END $$;create table if not exists orders
+    END $$;
+create table if not exists orders
 (
     id    serial not null
         constraint orders_pk

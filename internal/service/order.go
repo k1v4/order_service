@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"order_service/internal/models"
 )
 
@@ -20,12 +22,14 @@ type OrderRepo interface {
 }
 
 type OrderService struct {
-	Repo OrderRepo
+	Repo  OrderRepo
+	Cache *redis.Client
 }
 
-func NewOrderService(repo OrderRepo) *OrderService {
+func NewOrderService(repo OrderRepo, cache *redis.Client) *OrderService {
 	return &OrderService{
-		Repo: repo,
+		Repo:  repo,
+		Cache: cache,
 	}
 }
 
@@ -43,7 +47,22 @@ func (s *OrderService) CreateOrder(ctx context.Context, position models.Order) (
 }
 
 func (s *OrderService) GetOrder(ctx context.Context, id string) (*models.Order, error) {
-	return s.Repo.GetOrder(ctx, id)
+	var model *models.Order
+
+	err := s.Cache.Get(context.Background(), id).Scan(&model)
+	if err != nil {
+		if !errors.Is(err, redis.Nil) {
+			return nil, fmt.Errorf("redis failed: %w", err)
+		}
+	}
+
+	if errors.Is(err, redis.Nil) {
+		model, err = s.Repo.GetOrder(ctx, id)
+
+		s.Cache.Set(context.Background(), id, model, 10)
+	}
+
+	return model, err
 }
 
 func (s *OrderService) DeleteOrder(ctx context.Context, id string) error {

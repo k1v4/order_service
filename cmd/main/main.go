@@ -37,7 +37,7 @@ func main() {
 		panic(err)
 	}
 	repo := repository.NewOrderRepository(db)
-	service := service.NewOrderService(repo)
+	service := service.NewOrderService(repo, redis)
 
 	grpcServer, err := grpc.New(ctx, cfg.GRPCServerPort, cfg.RestServerPort, service)
 	if err != nil {
@@ -48,7 +48,7 @@ func main() {
 	graceCh := make(chan os.Signal, 1)
 	signal.Notify(graceCh, syscall.SIGINT, syscall.SIGTERM)
 
-	// Запуск сервера
+	// запуск сервера
 	go func() {
 		if err = grpcServer.Start(ctx); err != nil {
 			mainLogger.Error(ctx, err.Error())
