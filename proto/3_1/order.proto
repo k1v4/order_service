@@ -9,24 +9,24 @@ package api;
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse){
     option (google.api.http) = {
-      post: "/v1/order"
+      post: "/v1/orders"
       body: "*"
     };
   };
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse){
     option (google.api.http) = {
-      get: "/v1/order/{id}"
+      get: "/v1/orders/{id}"
     };
   };
   rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse){
     option (google.api.http) = {
-      put: "/v1/order/{id}"
+      put: "/v1/orders/{id}"
       body: "*"
     };
   };
   rpc DeleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse){
     option (google.api.http) = {
-      delete: "/v1/order/{id}"
+      delete: "/v1/orders/{id}"
     };
   };
   rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse){
