@@ -2,14 +2,12 @@ stages:
   - build
   - test
 
+variables:
+  DOCKER_IMAGE: 'docker:stable'
+
 build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+  image: $DOCKER_IMAGE
   script:
     - docker compose up --build -d
   artifacts:
@@ -21,9 +19,6 @@ test:
   image: golang:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
   script:
     - go test ./... -v
   only:
