@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+      - docker:dind
+  script:
+    - docker compose up --build -d
+  artifacts:
+    paths:
+      - docker-compose.yml
+
+test:
+  stage: test
+  script:
+    - go test ./... -v
+  only:
+    - main
