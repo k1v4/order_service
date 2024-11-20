@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"order_service/internal/models"
+	"time"
 )
 
 const (
@@ -47,19 +48,17 @@ func (s *OrderService) CreateOrder(ctx context.Context, position models.Order) (
 }
 
 func (s *OrderService) GetOrder(ctx context.Context, id string) (*models.Order, error) {
-	var model *models.Order
+	var model = &models.Order{}
 
-	err := s.Cache.Get(context.Background(), id).Scan(&model)
+	err := s.Cache.Get(context.Background(), id).Scan(model)
 	if err != nil {
-		if !errors.Is(err, redis.Nil) {
+		if errors.Is(err, redis.Nil) {
+			model, err = s.Repo.GetOrder(ctx, id)
+
+			s.Cache.Set(context.Background(), id, model, 10*time.Second)
+		} else {
 			return nil, fmt.Errorf("redis failed: %w", err)
 		}
-	}
-
-	if errors.Is(err, redis.Nil) {
-		model, err = s.Repo.GetOrder(ctx, id)
-
-		s.Cache.Set(context.Background(), id, model, 10)
 	}
 
 	return model, err

@@ -37,7 +37,7 @@ func New(ctx context.Context, grpcPort, restPort int, service Service) (*Server,
 	client.RegisterOrderServiceServer(grpcServer, NewOrderService(service))
 
 	conn, err := grpc.NewClient(
-		"0.0.0.0:50051",
+		fmt.Sprintf(":%d", grpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
