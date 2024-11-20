@@ -3,12 +3,13 @@ stages:
   - test
 
 variables:
-  DOCKER_IMAGE: 'docker:latest'
+  DOCKER_IMAGE: 'docker:stable'
 
 build:
   stage: build
   image: $DOCKER_IMAGE
   script:
+    - apk add --no-cache docker-compose
     - docker compose up --build -d
   artifacts:
     paths:
