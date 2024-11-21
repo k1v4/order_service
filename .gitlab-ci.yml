@@ -1,17 +1,28 @@
+image: docker:24.0.2
+
 stages:
   - build
   - test
 
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+before_script:
+  - docker info
+
 build:
   stage: build
-  image: docker:latest
   script:
-    - docker --version
-    - docker build .
+    - docker build -t myapp:latest .
+    - docker images | grep myapp
 
 test:
   stage: test
-  image: golang:latest
+  image: golang:1.21
   script:
     - go test ./... -v
   only:
