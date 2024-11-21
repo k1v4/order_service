@@ -1,28 +1,5 @@
-image: docker:24.0.2-compose-v2
-
-stages:
-  - build
-  - test
-
-services:
-  - name: docker:dind
-
-before_script:
-  - docker-compose --version
-
 build:
-  stage: build
-  image: $DOCKER_IMAGE
+  image: docker:27-rc-cli
   script:
-    - docker-compose up --build -d
-  artifacts:
-    paths:
-      - docker-compose.yml
-
-test:
-  stage: test
-  image: golang:latest
-  script:
-    - go test ./... -v
-  only:
-    - main
+    - docker --version
+    - docker compose up
