@@ -7,8 +7,6 @@ build:
   image: docker:27-rc-dind
   services:
     - docker:27-dind
-  variables:
-    DOCKER_TLS_CERTDIR: ""
   script:
     - docker --version
     - docker info
