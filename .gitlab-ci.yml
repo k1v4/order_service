@@ -7,7 +7,7 @@ build:
   image: docker:27-rc-dind
   script:
     - docker --version
-    - docker compose up --build -d
+    - docker compose build
   artifacts:
     paths:
       - docker-compose.yml
