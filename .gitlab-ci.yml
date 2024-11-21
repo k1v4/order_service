@@ -2,18 +2,18 @@ stages:
   - build
   - test
 
+default:
+  before_script:
+    - docker info
+
 build:
   stage: build
   image: docker:latest
   script:
-    - docker --version
-    - docker info
     - docker compose build
 
 test:
   stage: test
   image: golang:latest
   script:
-    - go test ./... -v
-  only:
-    - main
+    - go test -v
