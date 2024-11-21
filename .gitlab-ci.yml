@@ -10,6 +10,7 @@ build:
   stage: build
   image: docker:latest
   script:
+    - docker -v
     - docker compose build
 
 test:
