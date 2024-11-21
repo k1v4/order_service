@@ -17,7 +17,7 @@ build:
     - ls -la
     - echo "Попытка запустить docker-compose:"
     - docker --version
-    - docker compose up --build -d
+    - docker compose up
   artifacts:
     paths:
       - docker-compose.yml
