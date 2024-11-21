@@ -6,13 +6,8 @@ build:
   stage: build
   image: docker:27-rc-dind
   script:
-    - apt-get update && apt-get install -y wget
     - docker --version
-    - docker-compose images
     - docker-compose up
-  artifacts:
-    paths:
-      - docker-compose.yml
 
 test:
   stage: test
