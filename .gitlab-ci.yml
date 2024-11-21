@@ -1,29 +1,17 @@
-image: docker:24.0.2
-
 stages:
   - build
   - test
 
-variables:
-  DOCKER_HOST: "tcp://docker:2375"
-  DOCKER_TLS_CERTDIR: ""
-
-services:
-  - docker:dind
-
-before_script:
-  - docker --version
-  - go version || apk add --no-cache go
-
 build:
   stage: build
+  image: docker:latest
   script:
-    - docker build -t myapp:latest .
-    - docker images | grep myapp
+    - docker --version
+    - docker build .
 
 test:
   stage: test
-  image: golang:1.21
+  image: golang:latest
   script:
     - go test ./... -v
   only:
