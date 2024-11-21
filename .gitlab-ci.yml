@@ -4,7 +4,7 @@ stages:
 
 build:
   stage: build
-  image: docker:stable
+  image: docker:27-rc-dind
   services:
     - docker:dind
   variables:
