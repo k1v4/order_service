@@ -2,6 +2,10 @@ stages:
   - build
   - test
 
+services:
+  - name: harbor.example.com/dockerhub-proxy-cache/library/docker:27-rc-dind
+    alias: docker
+
 build:
   stage: build
   image: docker:27-rc-dind
