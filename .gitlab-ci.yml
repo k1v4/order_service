@@ -1,5 +1,20 @@
+stages:
+  - build
+  - test
+
 build:
   image: docker:27-rc-cli
   script:
     - docker --version
-    - docker compose up
+    - docker compose up --build -d
+  artifacts:
+    paths:
+      - docker-compose.yml
+
+test:
+  stage: test
+  image: golang:latest
+  script:
+    - go test ./... -v
+  only:
+    - main
