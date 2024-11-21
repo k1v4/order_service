@@ -4,10 +4,10 @@ stages:
 
 build:
   stage: build
-  image: golang:latest
+  image: docker:latest
   script:
     - docker --version
-    - docker build -f Dockerfile .
+    - docker compose build
 
 test:
   stage: test
