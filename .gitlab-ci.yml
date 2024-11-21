@@ -8,9 +8,7 @@ services:
 
 build:
   stage: build
-  image: docker:27-rc-dind
-  services:
-    - docker:dind
+  image: docker
   variables:
     DOCKER_HOST: tcp://docker:2375/
     DOCKER_DRIVER: overlay2
