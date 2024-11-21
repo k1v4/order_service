@@ -16,6 +16,7 @@ build:
     - echo "Содержимое каталога:"
     - ls -la
     - echo "Попытка запустить docker-compose:"
+    - apk add --no-cache docker-compose
     - docker --version
     - docker-compose up
   artifacts:
