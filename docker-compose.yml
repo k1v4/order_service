@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   backend1:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: order_service
     container_name: backend1
     env_file:
       - .env
@@ -22,9 +20,7 @@ services:
       - app-network
 
   backend2:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: order_service
     container_name: backend2
     env_file:
       - .env
@@ -42,9 +38,7 @@ services:
 
 
   backend3:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: order_service
     container_name: backend3
     env_file:
       - .env
