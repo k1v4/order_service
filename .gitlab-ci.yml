@@ -3,7 +3,7 @@ stages:
   - test
 
 variables:
-  DOCKER_IMAGE: 'docker:stable'
+  DOCKER_IMAGE: 'docker'
 
 build:
   stage: build
