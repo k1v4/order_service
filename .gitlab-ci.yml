@@ -7,10 +7,11 @@ build:
   image: docker:latest
   script:
     - docker -v
+    - docker build -t order_service .
     - docker compose build
 
 test:
   stage: test
   image: golang:latest
   script:
-    - go test -v
+    - go test ..cmd/main -v
