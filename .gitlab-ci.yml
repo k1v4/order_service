@@ -13,4 +13,4 @@ test:
   stage: test
   image: golang:latest
   script:
-    - go test ./cmd/main -v
+    - go test
