@@ -4,7 +4,7 @@ stages:
 
 build:
   stage: build
-  image: docker:27-rc-dind
+  image: docker:latest
   script:
     - docker --version
     - docker compose build
