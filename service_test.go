@@ -1,4 +1,4 @@
-package main
+package _83984_chvik1_course_1195
 
 import (
 	"context"
