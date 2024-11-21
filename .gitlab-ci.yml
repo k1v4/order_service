@@ -8,7 +8,7 @@ build:
   script:
     - docker --version
     - docker info
-    - docker compose .
+    - docker compose build
 
 test:
   stage: test
