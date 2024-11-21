@@ -7,7 +7,7 @@ build:
   image: docker:latest
   script:
     - docker --version
-    - docker compose build
+    - docker build .
   artifacts:
     paths:
       - docker-compose.yml
