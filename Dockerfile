@@ -12,7 +12,7 @@ FROM alpine AS runner
 
 COPY --from=builder /usr/local/src/bin/app /
 
-EXPOSE 80 8080
+EXPOSE 80 81
 
 COPY .env /
 
