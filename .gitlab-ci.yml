@@ -8,6 +8,7 @@ build:
   services:
     - docker:dind
   script:
+    - ls -l ./conf/nginx.conf
     - docker -v
     - mkdir -p conf
     - echo "user nginx;" > conf/nginx.conf
