@@ -9,7 +9,7 @@ build:
     - docker:dind
   script:
     - docker -v
-    - docker compose build
+    - docker compose up -d
 
 test:
   stage: test
@@ -17,4 +17,7 @@ test:
   services:
     - docker:dind
   script:
-    - go test -v
+    - docker-compose ps
+    - go test ./tests -v
+  after_script:
+    - docker-compose down
