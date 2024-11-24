@@ -5,12 +5,18 @@ stages:
 build:
   stage: build
   image: docker:latest
+  services:
+    - docker:dind
   script:
     - docker -v
-    - docker compose build
+    - docker compose up -d
 
 test:
   stage: test
   image: golang:latest
+  services:
+    - docker:dind
   script:
     - go test -v
+  after_script:
+    - docker compose down
