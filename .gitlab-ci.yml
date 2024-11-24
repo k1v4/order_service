@@ -11,6 +11,8 @@ build:
     - ls
     - ls -l ./conf/nginx.conf
     - docker compose up -d
+    - sleep 5
+    - docker exec -i db-container psql -U postgres -f /docker-entrypoint-initdb.d/init.sql
 
 test:
   stage: test
