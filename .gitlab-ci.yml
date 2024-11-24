@@ -8,6 +8,7 @@ build:
   services:
     - docker:dind
   script:
+    - ls
     - ls -l ./conf/nginx.conf
     - docker compose up -d
 
