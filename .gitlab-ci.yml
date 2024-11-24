@@ -9,7 +9,6 @@ build:
     - docker:dind
   script:
     - docker -v
-    - docker-compose down
     - docker compose up
 
 test:
