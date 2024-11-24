@@ -14,7 +14,7 @@ services:
 
 build:
   stage: build
-  image: golang:${GO_VERSION}
+  image: golang:latest
   script:
     - mkdir -p $BUILD_DIR
     - go mod tidy
