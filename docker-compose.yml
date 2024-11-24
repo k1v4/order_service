@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend1
     env_file:
-      - .env
+      - $env
     volumes:
       - .env:/.env
     ports:
