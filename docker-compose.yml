@@ -8,8 +8,6 @@ services:
     container_name: backend1
     env_file:
       - .env
-    volumes:
-      - .env:/.env
     ports:
       - "${GRPC_SERVER_PORT}:${GRPC_SERVER_PORT}"
       - "${REST_SERVER_PORT}:${REST_SERVER_PORT}"
