@@ -2,28 +2,15 @@ stages:
   - build
   - test
 
-variables:
-  APP_NAME: "order_service"
-  BUILD_DIR: "build"
-  POSTGRES_USER: "root"
-  POSTGRES_PASSWORD: "123"
-  POSTGRES_DB: "order_service"
-
-services:
-  - docker:dind
-
 build:
   stage: build
-  image: golang:latest
+  image: docker:latest
+  services:
+    - docker:dind
   script:
-    - mkdir -p $BUILD_DIR
-    - go mod tidy
-    - go build -o $BUILD_DIR/$APP_NAME ./cmd/main
-  artifacts:
-    paths:
-      - $BUILD_DIR/$APP_NAME
-  only:
-    - main
+    - docker -v
+    - docker-compose down
+    - docker compose up
 
 test:
   stage: test
@@ -31,6 +18,4 @@ test:
   services:
     - docker:dind
   script:
-    - go test -v
-  only:
-    - main
+    - go test ./tests -v
