@@ -8,7 +8,7 @@ import (
 )
 
 func TestOrderService(t *testing.T) {
-	conn, err := grpc.Dial("nginx:80", grpc.WithInsecure())
+	conn, err := grpc.Dial("host.docker.internal:80", grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to connect: %v", err)
 	}
