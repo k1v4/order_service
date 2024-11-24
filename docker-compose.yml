@@ -102,7 +102,9 @@ services:
       - app-network
 
   nginx:
-    image: nginx
+    build:
+      context: .
+      dockerfile: nginx-Dockerfile
     container_name: nginx_container
     ports:
       - "80:80"
