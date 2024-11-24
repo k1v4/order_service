@@ -104,7 +104,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: nginx-Dockerfile
+      dockerfile: Dockerfile_nginx
     container_name: nginx_container
     ports:
       - "80:80"
