@@ -9,6 +9,8 @@ build:
     - docker:dind
   script:
     - docker -v
+    - mkdir -p conf
+    - echo "user nginx;" > conf/nginx.conf
     - docker compose up
 
 test:
