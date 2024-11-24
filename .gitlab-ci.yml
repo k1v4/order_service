@@ -15,6 +15,6 @@ test:
   stage: test
   image: golang:latest
   services:
-    - docker:dind
+    - docker:dind 
   script:
     - go test -v
