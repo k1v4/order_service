@@ -7,17 +7,23 @@ build:
   image: docker:latest
   services:
     - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
   script:
     - docker -v
-    - docker compose up
+    - docker build -t my-app .
 
 test:
   stage: test
   image: golang:latest
   services:
     - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
   script:
-    - docker-compose ps
-    - go test ./tests -v
+    - docker images
+    - docker run -d --name my-app-test my-app
+    - go test -v
   after_script:
-    - docker-compose down
+    - docker stop my-app-test
+    - docker rm my-app-test
